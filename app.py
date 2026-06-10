@@ -746,6 +746,10 @@ with tab1:
 
             st.success("Account created successfully")
 
+            cursor.execute("SELECT * FROM users")
+
+            st.write(cursor.fetchall())
+
         except Exception as e:
 
             st.error(f"REAL ERROR = {e}")
