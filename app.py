@@ -749,36 +749,7 @@ if not st.session_state.logged_in:
                 use_container_width=True
             ):
 
-                try:
-
-                    cursor.execute(
-
-                        '''
-                        INSERT INTO users (
-                            username,
-                            password
-                        )
-                        VALUES (?, ?)
-                        ''',
-
-                        (
-                            signup_username,
-                            signup_password
-                        )
-
-                    )
-
-                    conn.commit()
-
-                    st.success(
-                        "Account created successfully."
-                    )
-
-                except Exception as e:
-
-                    st.error(
-                        f"Actual Error: {e}"
-                    )
+                st.success("Button clicked successfully")
 
     
 
