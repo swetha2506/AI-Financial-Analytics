@@ -1,9 +1,9 @@
-streamlit==1.57.0
-pandas==3.0.2
-numpy==2.4.4
-matplotlib==3.10.9
-scikit-learn==1.8.0
-google-generativeai==0.8.6
-reportlab==4.5.0
+streamlit
+pandas
+numpy
+matplotlib
+scikit-learn
+google-generativeai
+reportlab
 plotly
-seaborn==0.13.2
+seaborn
