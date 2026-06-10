@@ -726,25 +726,29 @@ with tab1:
 
     if st.button("Create Account"):
 
-        st.success("Button clicked")
-
         try:
 
             cursor.execute(
-                "SELECT * FROM users"
+                '''
+                INSERT INTO users (
+                    username,
+                    password
+                )
+                VALUES (?, ?)
+                ''',
+                (
+                    username,
+                    password
+                )
             )
 
-            rows = cursor.fetchall()
+            conn.commit()
 
-            st.write("Database connected successfully")
-
-            st.write(rows)
+            st.success("Account created successfully")
 
         except Exception as e:
 
-            st.error(
-                f"Database Error: {e}"
-            )
+            st.error(f"REAL ERROR = {e}")
 
 with tab2:
 
