@@ -828,8 +828,22 @@ with tab2:
             st.write(user)
 
             st.write("STEP 3 : Fetch Done")
+            cursor.execute("SELECT * FROM users")
 
+            all_users = cursor.fetchall()
+
+            st.write("ALL USERS IN DATABASE:")
+            st.write(all_users)
+
+            st.write("ENTERED USERNAME:")
+            st.write(login_username)
+
+            st.write("ENTERED PASSWORD:")
+            st.write(login_password)
+
+            st.write("FETCHED USER:")
             st.write(user)
+
 
             if user:
 
