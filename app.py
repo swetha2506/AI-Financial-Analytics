@@ -748,31 +748,31 @@ with tab1:
                 VALUES (?, ?)
                 ''',
                 (
-                    signup_username,
-                    signup_password
+                    signup_username.strip(),
+                    signup_password.strip()
                 )
             )
 
-            st.write("STEP 2 : Insert Success")
-
             conn.commit()
 
-            st.write("STEP 3 : Commit Success")
-
             cursor.execute(
-                "SELECT * FROM users"
+                '''
+                SELECT *
+                FROM users
+                WHERE username = ?
+                ''',
+                (signup_username.strip(),)
             )
 
-            users = cursor.fetchall()
+            st.write("NEW USER AFTER INSERT:")
+            st.write(cursor.fetchone())
 
-            st.write("STEP 4 : Fetch Success")
+            cursor.execute("SELECT * FROM users")
 
-            st.success(
-                "Account created successfully"
-            )
+            st.write("ALL USERS:")
+            st.write(cursor.fetchall())
 
-            st.write(users)
-
+            st.success("Account created successfully")
         except Exception as e:
 
             st.error(
@@ -811,12 +811,14 @@ with tab2:
                 '''
                 SELECT *
                 FROM users
-                WHERE username = ?
+                WHERE TRIM(username)=?
                 ''',
-                (login_username,)
+                (login_username.strip(),)
             )
 
-            user = cursor.fetchone()
+
+            st.write("USER FOUND:")
+            st.write(user)
 
             st.write("USER FOUND BY USERNAME:")
             st.write(user)
