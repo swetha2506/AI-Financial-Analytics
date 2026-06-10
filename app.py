@@ -707,8 +707,9 @@ risk_model.fit(X_train_risk, y_train_risk)
 # LOGIN / SIGNUP SYSTEM
 # -----------------------------------------------------
 
-if not st.session_state.logged_in:
-
+st.title("TEST PAGE")
+st.write("Render is working")
+st.stop()
     col1, col2, col3 = st.columns([1,2,1])
 
     with col2:
