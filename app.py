@@ -710,143 +710,143 @@ risk_model.fit(X_train_risk, y_train_risk)
 st.title("TEST PAGE")
 st.write("Render is working")
 st.stop()
-   # col1, col2, col3 = st.columns([1,2,1])
+#    # col1, col2, col3 = st.columns([1,2,1])
 
-    #with col2:
+#     #with col2:
 
-        #st.title("AI-Driven Personal Financial Intelligence Platform")
-        #st.markdown("""
-        #<p style="
-        #color:#F8FAFC;
-        #font-size:20px;
-        #font-weight:500;
-        #margin-bottom:20px;
-        #">
-        #Smart Expense Tracking • Risk Analysis • Forecasting •
-        #AI Insights
-        #</p>
-        #""", unsafe_allow_html=True)
+#         #st.title("AI-Driven Personal Financial Intelligence Platform")
+#         #st.markdown("""
+#         #<p style="
+#         #color:#F8FAFC;
+#         #font-size:20px;
+#         #font-weight:500;
+#         #margin-bottom:20px;
+#         #">
+#         #Smart Expense Tracking • Risk Analysis • Forecasting •
+#         #AI Insights
+#         #</p>
+#         #""", unsafe_allow_html=True)
 
-        #tab1, tab2 = st.tabs(
-        #["📝 Signup", "🔑 Login"]
-    #)
+#         #tab1, tab2 = st.tabs(
+#         #["📝 Signup", "🔑 Login"]
+#     #)
 
-    # ---------------- SIGNUP ----------------
+#     # ---------------- SIGNUP ----------------
 
-        with tab1:
+#         with tab1:
 
-            signup_username = st.text_input(
-                "Username",
-                key="signup_user"
-            )
+#             signup_username = st.text_input(
+#                 "Username",
+#                 key="signup_user"
+#             )
 
-            signup_password = st.text_input(
-                "Password",
-                type="password",
-                key="signup_pass"
-            )
-            if st.button(
-                "Create Account",
-                use_container_width=True
-            ):
+#             signup_password = st.text_input(
+#                 "Password",
+#                 type="password",
+#                 key="signup_pass"
+#             )
+#             if st.button(
+#                 "Create Account",
+#                 use_container_width=True
+#             ):
 
-                st.success("Button clicked successfully")
+#                 st.success("Button clicked successfully")
 
     
 
-            # ---------------- LOGIN ----------------
+#             # ---------------- LOGIN ----------------
 
-        with tab2:
+#         with tab2:
 
-            login_username = st.text_input(
-                "Username",
-                key="login_user"
-            )
+#             login_username = st.text_input(
+#                 "Username",
+#                 key="login_user"
+#             )
 
-            login_password = st.text_input(
-                "Password",
-                type="password",
-                key="login_pass"
-            )
+#             login_password = st.text_input(
+#                 "Password",
+#                 type="password",
+#                 key="login_pass"
+#             )
 
-            if st.button(
-                "Login",
-                use_container_width=True
-            ):
-                cursor.execute(
+#             if st.button(
+#                 "Login",
+#                 use_container_width=True
+#             ):
+#                 cursor.execute(
 
-                    '''
-                    SELECT *
-                    FROM users
-                    WHERE username = ?
-                    AND password = ?
-                    ''',
+#                     '''
+#                     SELECT *
+#                     FROM users
+#                     WHERE username = ?
+#                     AND password = ?
+#                     ''',
 
-                    (
-                        login_username,
-                        login_password
-                    )
+#                     (
+#                         login_username,
+#                         login_password
+#                     )
 
-                )
+#                 )
 
-                user = cursor.fetchone()
+#                 user = cursor.fetchone()
 
-                if user:
+#                 if user:
 
-                    st.session_state.logged_in = True
+#                     st.session_state.logged_in = True
 
-                    st.session_state.username = (
-                        login_username
-                    )
+#                     st.session_state.username = (
+#                         login_username
+#                     )
 
-                    cursor.execute(
+#                     cursor.execute(
 
-                        '''
-                        SELECT income,
-                               expenses,
-                               savings,
-                               debt,
-                               credit_score,
-                               investments,
-                               financial_goal
-                        FROM user_profiles
-                        WHERE username = ?
-                        ''',
+#                         '''
+#                         SELECT income,
+#                                expenses,
+#                                savings,
+#                                debt,
+#                                credit_score,
+#                                investments,
+#                                financial_goal
+#                         FROM user_profiles
+#                         WHERE username = ?
+#                         ''',
 
-                        (
-                            login_username,
-                        )
+#                         (
+#                             login_username,
+#                         )
 
-                    )
+#                     )
 
-                    profile = cursor.fetchone()
+#                     profile = cursor.fetchone()
 
-                    if profile:
+#                     if profile:
 
-                        st.session_state.user_profile = {
+#                         st.session_state.user_profile = {
 
-                            "income": profile[0],
-                            "expenses": profile[1],
-                            "savings": profile[2],
-                            "debt": profile[3],
-                            "credit_score": profile[4],
-                            "investments": profile[5],
-                            "financial_goal": profile[6]
+#                             "income": profile[0],
+#                             "expenses": profile[1],
+#                             "savings": profile[2],
+#                             "debt": profile[3],
+#                             "credit_score": profile[4],
+#                             "investments": profile[5],
+#                             "financial_goal": profile[6]
 
-                        }
+#                         }
 
-                    st.success(
-                        "Login successful."
-                    )
+#                     st.success(
+#                         "Login successful."
+#                     )
 
-                    st.rerun()
+#                     st.rerun()
 
-                else:
+#                 else:
 
-                    st.error(
-                        "Invalid username or password."
-                    )
-    st.stop()
+#                     st.error(
+#                         "Invalid username or password."
+#                     )
+#     st.stop()
 # -----------------------------------------------------
 # SIDEBAR NAVIGATION
 # -----------------------------------------------------
