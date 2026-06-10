@@ -16,8 +16,6 @@ import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import RandomForestClassifier
-import google.generativeai as genai
-
 import os
 import google.generativeai as genai
 
@@ -29,6 +27,7 @@ if not GEMINI_API_KEY:
 genai.configure(api_key=GEMINI_API_KEY)
 
 model = genai.GenerativeModel("gemini-2.5-flash")
+
 st.set_page_config(
     page_title="AI Financial Analytics Platform",
     page_icon="💰",
@@ -440,6 +439,7 @@ st.markdown(
 # LOAD DATA
 # -----------------------------------------------------
 
+
 @st.cache_data
 
 def load_data():
@@ -707,26 +707,33 @@ risk_model.fit(X_train_risk, y_train_risk)
 # LOGIN / SIGNUP SYSTEM
 # -----------------------------------------------------
 
-st.title("LOGIN TEST")
+tab1, tab2 = st.tabs(
+    ["📝 Signup", "🔑 Login"]
+)
 
-tab1, tab2 = st.tabs(["Signup", "Login"])
+# ---------------- SIGNUP ----------------
 
 with tab1:
 
-    username = st.text_input(
+    signup_username = st.text_input(
         "Username",
-        key="test_user"
+        key="signup_user"
     )
 
-    password = st.text_input(
+    signup_password = st.text_input(
         "Password",
         type="password",
-        key="test_pass"
+        key="signup_pass"
     )
 
-    if st.button("Create Account"):
+    if st.button(
+        "Create Account",
+        use_container_width=True
+    ):
 
         try:
+
+            st.write("STEP 1 : Button Clicked")
 
             cursor.execute(
                 '''
@@ -737,26 +744,100 @@ with tab1:
                 VALUES (?, ?)
                 ''',
                 (
-                    username,
-                    password
+                    signup_username,
+                    signup_password
                 )
             )
 
+            st.write("STEP 2 : Insert Success")
+
             conn.commit()
 
-            st.success("Account created successfully")
+            st.write("STEP 3 : Commit Success")
 
-            cursor.execute("SELECT * FROM users")
+            cursor.execute(
+                "SELECT * FROM users"
+            )
 
-            st.write(cursor.fetchall())
+            users = cursor.fetchall()
+
+            st.write("STEP 4 : Fetch Success")
+
+            st.success(
+                "Account created successfully"
+            )
+
+            st.write(users)
 
         except Exception as e:
 
-            st.error(f"REAL ERROR = {e}")
+            st.error(
+                f"REAL ERROR = {e}"
+            )
+
+# ---------------- LOGIN ----------------
 
 with tab2:
 
-    st.write("Login tab")
+    login_username = st.text_input(
+        "Username",
+        key="login_user"
+    )
+
+    login_password = st.text_input(
+        "Password",
+        type="password",
+        key="login_pass"
+    )
+
+    if st.button(
+        "Login",
+        use_container_width=True
+    ):
+
+        try:
+
+            st.write("STEP 1 : Login Button Clicked")
+
+            cursor.execute(
+                '''
+                SELECT *
+                FROM users
+                WHERE username = ?
+                AND password = ?
+                ''',
+                (
+                    login_username,
+                    login_password
+                )
+            )
+
+            st.write("STEP 2 : Query Executed")
+
+            user = cursor.fetchone()
+
+            st.write("STEP 3 : Fetch Done")
+
+            st.write(user)
+
+            if user:
+
+                st.success(
+                    "LOGIN SUCCESSFUL"
+                )
+
+            else:
+
+                st.error(
+                    "INVALID USERNAME OR PASSWORD"
+                )
+
+        except Exception as e:
+
+            st.error(
+                f"LOGIN ERROR = {e}"
+            )
+
 # -----------------------------------------------------
 # SIDEBAR NAVIGATION
 # -----------------------------------------------------
