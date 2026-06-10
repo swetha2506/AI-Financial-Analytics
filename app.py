@@ -821,51 +821,25 @@ with tab2:
             st.write("USER FOUND:")
             st.write(user)
 
-            st.write("USER FOUND BY USERNAME:")
-            st.write(user)
-
-            st.write("Entered Username:", login_username)
-            st.write("Entered Password:", login_password)
-
-            cursor.execute("SELECT * FROM users")
-            all_users = cursor.fetchall()
-
-            st.write("Database Users:")
-            st.write(all_users)
-
-            st.write("Fetched User:")
-            st.write(user)
-
-            st.write("STEP 3 : Fetch Done")
-            cursor.execute("SELECT * FROM users")
-
-            all_users = cursor.fetchall()
-
-            st.write("ALL USERS IN DATABASE:")
-            st.write(all_users)
-
-            st.write("ENTERED USERNAME:")
-            st.write(login_username)
-
-            st.write("ENTERED PASSWORD:")
-            st.write(login_password)
-
-            st.write("FETCHED USER:")
-            st.write(user)
-
-
             if user:
 
-                st.success(
-                    "LOGIN SUCCESSFUL"
-                )
+                st.write("DATABASE PASSWORD:")
+                st.write(user[3])
+
+                st.write("ENTERED PASSWORD:")
+                st.write(login_password.strip())
+
+                if str(user[3]).strip() == login_password.strip():
+
+                    st.success("LOGIN SUCCESSFUL")
+
+                else:
+
+                    st.error("PASSWORD MISMATCH")
 
             else:
 
-                st.error(
-                    "INVALID USERNAME OR PASSWORD"
-                )
-
+                st.error("USERNAME NOT FOUND")
         except Exception as e:
 
             st.error(
