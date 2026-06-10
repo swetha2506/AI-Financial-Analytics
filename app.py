@@ -815,6 +815,17 @@ with tab2:
             st.write("STEP 2 : Query Executed")
 
             user = cursor.fetchone()
+            st.write("Entered Username:", login_username)
+            st.write("Entered Password:", login_password)
+
+            cursor.execute("SELECT * FROM users")
+            all_users = cursor.fetchall()
+
+            st.write("Database Users:")
+            st.write(all_users)
+
+            st.write("Fetched User:")
+            st.write(user)
 
             st.write("STEP 3 : Fetch Done")
 
