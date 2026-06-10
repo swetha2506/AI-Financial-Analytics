@@ -716,7 +716,23 @@ if not st.session_state.logged_in:
     )
 
     with tab1:
-        st.write("Signup tab")
+
+        signup_username = st.text_input(
+            "Username",
+            key="signup_user"
+        )
+
+        signup_password = st.text_input(
+            "Password",
+            type="password",
+            key="signup_pass"
+        )
+
+        if st.button(
+            "Create Account",
+            use_container_width=True
+        ):
+            st.success("Button clicked")
 
     with tab2:
         st.write("Login tab")
