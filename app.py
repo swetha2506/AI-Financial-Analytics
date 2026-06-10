@@ -734,6 +734,10 @@ with tab1:
         try:
 
             st.write("STEP 1 : Button Clicked")
+            import os
+
+            st.write("DATABASE FILE:")
+            st.write(os.path.abspath("financial_analytics.db"))
 
             cursor.execute(
                 '''
@@ -798,21 +802,24 @@ with tab2:
         try:
 
             st.write("STEP 1 : Login Button Clicked")
+            import os
+
+            st.write("DATABASE FILE:")
+            st.write(os.path.abspath("financial_analytics.db"))
 
             cursor.execute(
                 '''
                 SELECT *
                 FROM users
                 WHERE username = ?
-                AND password = ?
                 ''',
-                (
-                    login_username,
-                    login_password
-                )
+                (login_username,)
             )
 
-            st.write("STEP 2 : Query Executed")
+            user = cursor.fetchone()
+
+            st.write("USER FOUND BY USERNAME:")
+            st.write(user)
 
             user = cursor.fetchone()
             st.write("Entered Username:", login_username)
