@@ -707,38 +707,48 @@ risk_model.fit(X_train_risk, y_train_risk)
 # LOGIN / SIGNUP SYSTEM
 # -----------------------------------------------------
 
-if not st.session_state.logged_in:
+st.title("LOGIN TEST")
 
-    st.title("LOGIN TEST")
+tab1, tab2 = st.tabs(["Signup", "Login"])
 
-    tab1, tab2 = st.tabs(
-        ["Signup", "Login"]
+with tab1:
+
+    username = st.text_input(
+        "Username",
+        key="test_user"
     )
 
-    with tab1:
+    password = st.text_input(
+        "Password",
+        type="password",
+        key="test_pass"
+    )
 
-        signup_username = st.text_input(
-            "Username",
-            key="signup_user"
-        )
+    if st.button("Create Account"):
 
-        signup_password = st.text_input(
-            "Password",
-            type="password",
-            key="signup_pass"
-        )
+        st.success("Button clicked")
 
-        if st.button(
-            "Create Account",
-            use_container_width=True
-        ):
-            st.success("Button clicked")
+        try:
 
-    with tab2:
-        st.write("Login tab")
+            cursor.execute(
+                "SELECT * FROM users"
+            )
 
-    st.stop()
+            rows = cursor.fetchall()
 
+            st.write("Database connected successfully")
+
+            st.write(rows)
+
+        except Exception as e:
+
+            st.error(
+                f"Database Error: {e}"
+            )
+
+with tab2:
+
+    st.write("Login tab")
 # -----------------------------------------------------
 # SIDEBAR NAVIGATION
 # -----------------------------------------------------
