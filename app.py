@@ -710,26 +710,26 @@ risk_model.fit(X_train_risk, y_train_risk)
 st.title("TEST PAGE")
 st.write("Render is working")
 st.stop()
-    col1, col2, col3 = st.columns([1,2,1])
+   # col1, col2, col3 = st.columns([1,2,1])
 
-    with col2:
+    #with col2:
 
-        st.title("AI-Driven Personal Financial Intelligence Platform")
-        st.markdown("""
-        <p style="
-        color:#F8FAFC;
-        font-size:20px;
-        font-weight:500;
-        margin-bottom:20px;
-        ">
-        Smart Expense Tracking • Risk Analysis • Forecasting •
-        AI Insights
-        </p>
-        """, unsafe_allow_html=True)
+        #st.title("AI-Driven Personal Financial Intelligence Platform")
+        #st.markdown("""
+        #<p style="
+        #color:#F8FAFC;
+        #font-size:20px;
+        #font-weight:500;
+        #margin-bottom:20px;
+        #">
+        #Smart Expense Tracking • Risk Analysis • Forecasting •
+        #AI Insights
+        #</p>
+        #""", unsafe_allow_html=True)
 
-        tab1, tab2 = st.tabs(
-        ["📝 Signup", "🔑 Login"]
-    )
+        #tab1, tab2 = st.tabs(
+        #["📝 Signup", "🔑 Login"]
+    #)
 
     # ---------------- SIGNUP ----------------
 
