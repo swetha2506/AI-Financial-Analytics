@@ -815,6 +815,7 @@ with tab2:
                 ''',
                 (login_username.strip(),)
             )
+            user = cursor.fetchone()
 
 
             st.write("USER FOUND:")
@@ -823,7 +824,6 @@ with tab2:
             st.write("USER FOUND BY USERNAME:")
             st.write(user)
 
-            user = cursor.fetchone()
             st.write("Entered Username:", login_username)
             st.write("Entered Password:", login_password)
 
