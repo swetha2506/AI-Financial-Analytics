@@ -748,17 +748,16 @@ if st.session_state.logged_in:
 if "page" not in st.session_state:
     st.session_state.page = pages[0]
 
-page = st.sidebar.radio(
-
+selected_page = st.sidebar.radio(
     "Navigation",
-
     pages,
-
     index=pages.index(st.session_state.page)
-
 )
 
-st.session_state.page = page
+if selected_page != st.session_state.page:
+    st.session_state.page = selected_page
+
+page = st.session_state.page
 
 #-----------------------------------------------------
 # home
@@ -1135,6 +1134,7 @@ elif page == "Financial Profile":
 # -----------------------------------------------------
 
 elif page == "Analytics Dashboard":
+    st.write("Analytics Dashboard Loaded")
 
     st.title("Personalized Financial Dashboard")
 
@@ -1258,8 +1258,10 @@ elif page == "Analytics Dashboard":
 
         with col2:
 
-            total = sum(values)
-        
+        total = sum(values)
+
+        if total == 0:
+            total = 1        
 
             st.markdown("<br><br><br>", unsafe_allow_html=True)
 
