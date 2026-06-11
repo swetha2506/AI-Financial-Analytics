@@ -1258,10 +1258,10 @@ elif page == "Analytics Dashboard":
 
         with col2:
 
-        total = sum(values)
+            total = sum(values)
 
-        if total == 0:
-            total = 1        
+            if total == 0:
+                total = 1        
 
             st.markdown("<br><br><br>", unsafe_allow_html=True)
 
