@@ -390,9 +390,9 @@ conn.commit()
 # SESSION STATE INITIALIZATION
 # -----------------------------------------------------
 if "logged_in" not in st.session_state:
-    st.session_state.logged_in = True
+    st.session_state.logged_in = False
 if "username" not in st.session_state:
-    st.session_state.username = "demo_user"
+    st.session_state.username = ""
 if "user_profile" not in st.session_state:
     st.session_state.user_profile = {}
 # Persistent Profile Loading from SQL on launch
@@ -467,6 +467,62 @@ X_train_risk, X_test_risk, y_train_risk, y_test_risk = train_test_split(
 )
 risk_model = RandomForestClassifier(random_state=42)
 risk_model.fit(X_train_risk, y_train_risk)
+# -----------------------------------------------------
+# LOGIN / SIGNUP SYSTEM
+# -----------------------------------------------------
+if not st.session_state.logged_in:
+    col1, col2, col3 = st.columns([1,2,1])
+    with col2:
+        st.title("AI-Driven Personal Financial Intelligence Platform")
+        st.markdown('''
+        <p style="
+        color:#F8FAFC;
+        font-size:20px;
+        font-weight:500;
+        margin-bottom:20px;
+        ">
+        Smart Expense Tracking • Risk Analysis • Forecasting •
+        AI Insights
+        </p>
+        ''', unsafe_allow_html=True)
+        
+        tab1, tab2 = st.tabs(["📝 Signup", "🔑 Login"])
+
+        # ---------------- SIGNUP ----------------
+        with tab1:
+            signup_username = st.text_input("Username", key="signup_user")
+            signup_password = st.text_input("Password", type="password", key="signup_pass")
+            if st.button("Create Account", use_container_width=True):
+                try:
+                    cursor.execute('''INSERT INTO users (username, password) VALUES (?, ?)''', (signup_username, signup_password))
+                    conn.commit()
+                    st.success("Account created successfully.")
+                except Exception as e:
+                    st.error(f"Error: {e}")
+
+        # ---------------- LOGIN ----------------
+        with tab2:
+            login_username = st.text_input("Username", key="login_user")
+            login_password = st.text_input("Password", type="password", key="login_pass")
+            if st.button("Login", use_container_width=True):
+                cursor.execute('''SELECT * FROM users WHERE username = ? AND password = ?''', (login_username, login_password))
+                user = cursor.fetchone()
+                if user:
+                    st.session_state.logged_in = True
+                    st.session_state.username = login_username
+                    cursor.execute('''SELECT income, expenses, savings, debt, credit_score, investments, financial_goal FROM user_profiles WHERE username = ?''', (login_username,))
+                    profile = cursor.fetchone()
+                    if profile:
+                        st.session_state.user_profile = {
+                            "income": profile[0], "expenses": profile[1], "savings": profile[2],
+                            "debt": profile[3], "credit_score": profile[4], "investments": profile[5], "financial_goal": profile[6]
+                        }
+                    st.success("Login successful.")
+                    st.rerun()
+                else:
+                    st.error("Invalid username or password.")
+    st.stop()
+
 # -----------------------------------------------------
 # SIDEBAR NAVIGATION
 # -----------------------------------------------------
@@ -1374,169 +1430,742 @@ elif page == "Forecasting":
 # -----------------------------------------------------
 # PAGE 9: SMART RECOMMENDATIONS
 # -----------------------------------------------------
+
 elif page == "Smart Recommendations":
-    st.title("💡 AI Smart Recommendations")
-    st.markdown("Personalized wealth suggestions powered by Gemini 2.5 Flash.")
-    profile = st.session_state.get("user_profile", {})
+
+    st.title("AI Smart Financial Advisor")
+
+    profile = st.session_state.get(
+        "user_profile",
+        {}
+    )
+
     if not profile:
-        st.warning("Please create your financial profile first.")
+
+        st.warning(
+            "Please create your financial profile first."
+        )
+
     else:
+
         income = profile["income"]
         expenses = profile["expenses"]
         savings = profile["savings"]
         debt = profile["debt"]
-        credit_score = profile["credit_score"]
         investments = profile["investments"]
+        credit_score = profile["credit_score"]
         financial_goal = profile["financial_goal"]
-        if model:
-            with st.spinner("Analyzing profile & requesting AI insights..."):
-                prompt = f"""
-                You are a senior wealth advisor. Provide a high-fidelity audit for this client:
-                - Monthly Income: ₹{income:,.0f}
-                - Monthly Expenses: ₹{expenses:,.0f}
-                - Total Savings: ₹{savings:,.0f}
-                - Total Debt: ₹{debt:,.0f}
-                - Credit Score: {credit_score}
-                - Monthly Investments: ₹{investments:,.0f}
-                - Financial Goal: {financial_goal}
-                Generate the advice exactly in this format:
-                ## 📊 Recommended Asset Allocation
-                Provide percentage suggestions for Cash/Emergency Fund, Equities, and Fixed Income/Debt based on their goal.
-                ## 🛠️ Tactical Recommendations
-                - **Saving & Budgeting**: Specific tactical ideas based on their income/expense gap.
-                - **Debt Management**: Specific tips on managing outstanding debt.
-                - **Credit Improvement**: Guidance tailored to credit score {credit_score}.
-                ## 🚀 Priority Action Items
-                List 3 immediate, specific steps they must take this week.
-                Maintain an expert, professional voice. Keep comments under 250 words total.
+
+        # RATIOS
+
+        savings_ratio = savings / income if income > 0 else 0
+
+        expense_ratio = expenses / income if income > 0 else 0
+
+        debt_ratio = debt / income if income > 0 else 0
+
+        investment_ratio = investments / income if income > 0 else 0
+
+        # HEADER
+
+        st.markdown(
+            "## 💡 Personalized Financial Recommendations"
+        )
+
+        recommendations = []
+
+        # SAVINGS RECOMMENDATIONS
+
+        if savings_ratio < 1:
+
+            recommendations.append({
+
+                "title": "Increase Savings",
+
+                "message":
+                "Try saving at least 20% of monthly income.",
+
+                "priority": "High"
+
+            })
+
+        # EXPENSE RECOMMENDATIONS
+
+        if expense_ratio > 0.7:
+
+            recommendations.append({
+
+                "title": "Reduce Expenses",
+
+                "message":
+                "Your expenses are consuming most of your income.",
+
+                "priority": "High"
+
+            })
+
+        # DEBT RECOMMENDATIONS
+
+        if debt_ratio > 0.5:
+
+            recommendations.append({
+
+                "title": "Debt Reduction Plan",
+
+                "message":
+                "Focus on reducing high-interest debt first.",
+
+                "priority": "Critical"
+
+            })
+
+        # INVESTMENT RECOMMENDATIONS
+
+        if investments < 500:
+
+            recommendations.append({
+
+                "title": "Increase Investments",
+
+                "message":
+                "Consider SIPs, index funds, or long-term investing.",
+
+                "priority": "Medium"
+
+            })
+
+        # CREDIT SCORE
+
+        if credit_score < 700:
+
+            recommendations.append({
+
+                "title": "Improve Credit Score",
+
+                "message":
+                "Pay bills on time and reduce credit utilization.",
+
+                "priority": "Medium"
+
+            })
+
+        # GOAL BASED RECOMMENDATIONS
+
+        if financial_goal == "Buy House":
+
+            recommendations.append({
+
+                "title": "Home Planning",
+
+                "message":
+                "Increase down-payment savings and improve credit profile.",
+
+                "priority": "High"
+
+            })
+
+        elif financial_goal == "Retirement Planning":
+
+            recommendations.append({
+
+                "title": "Retirement Investments",
+
+                "message":
+                "Increase long-term retirement contributions.",
+
+                "priority": "High"
+
+            })
+
+        elif financial_goal == "Emergency Fund":
+
+            recommendations.append({
+
+                "title": "Emergency Fund",
+
+                "message":
+                "Maintain at least 6 months of expenses as emergency savings.",
+
+                "priority": "Critical"
+
+            })
+
+        # DISPLAY RECOMMENDATIONS
+
+        if len(recommendations) == 0:
+
+            st.success(
+                "Your financial profile looks excellent."
+            )
+
+        else:
+
+            for rec in recommendations:
+
+                if rec["priority"] == "Critical":
+
+                    st.error(
+                        f"""
+                        {rec['title']}
+
+                        {rec['message']}
+                        """
+                    )
+
+                elif rec["priority"] == "High":
+
+                    st.warning(
+                        f"""
+                        {rec['title']}
+
+                        {rec['message']}
+                        """
+                    )
+
+                else:
+
+                    st.info(
+                        f"""
+                        {rec['title']}
+
+                        {rec['message']}
+                        """
+                    )
+        st.markdown("## 🎯 Suggested Monthly Targets")
+
+        target_savings = income * 0.2
+
+        target_investments = income * 0.15
+
+        target_expenses = income * 0.5
+
+        col1, col2, col3 = st.columns(3)
+
+        col1.metric(
+            "Target Savings",
+            f" ₹{round(target_savings,2)}"
+        )
+
+        col2.metric(
+            "Target Investments",
+            f" ₹{round(target_investments,2)}"
+        )
+
+        col3.metric(
+            "Recommended Expenses",
+            f" ₹{round(target_expenses,2)}"
+        )
+
+
+        # BUDGET ALLOCATION
+
+        st.markdown("## 💰 Recommended Budget Allocation")
+
+        budget_df = pd.DataFrame({
+            "Category": [
+                "Needs",
+                "Savings",
+                "Investments",
+                "Entertainment"
+            ],
+            "Recommended %": [
+                50,
+                20,
+                20,
+                10
+            ]
+        })
+
+        colors = [
+            "#3B82F6",
+            "#10B981",
+            "#8B5CF6",
+            "#F59E0B"
+        ]
+
+        fig, ax = plt.subplots(figsize=(6,3))
+
+        wedges, texts = ax.pie(
+            budget_df["Recommended %"],
+            labels=None,
+            startangle=90,
+            colors=colors
+        )
+
+        ax.legend(
+            wedges,
+            [
+                f"{cat} - {pct}%"
+                for cat, pct in zip(
+                    budget_df["Category"],
+                    budget_df["Recommended %"]
+                )
+            ],
+            loc="center left",
+            bbox_to_anchor=(1, 0.5)
+        )
+
+        plt.tight_layout()
+        fig.patch.set_facecolor("#0F172A")
+        ax.set_facecolor("#0F172A")
+
+
+        st.pyplot(fig)
+        # MONTHLY SAVINGS TARGET
+
+        
+        # FUTURE IMPROVEMENT SCORE
+
+        st.markdown("## 🚀 Financial Improvement Potential")
+
+        improvement_score = 100
+
+        if expense_ratio > 0.7:
+            improvement_score -= 25
+
+        if debt_ratio > 0.5:
+            improvement_score -= 30
+
+        if savings_ratio < 1:
+            improvement_score -= 20
+
+        if investments < 500:
+            improvement_score -= 15
+
+        improvement_score = max(
+            0,
+            improvement_score
+        )
+
+        st.progress(
+            improvement_score / 100
+        )
+
+        st.write(
+            f"Financial Improvement Potential: {improvement_score}/100"
+        )
+
+        # AI SUMMARY
+
+        st.markdown("## 🤖 AI Financial Summary")
+
+        st.success(
+            f"""
+        📈 Financial Goal: {financial_goal}
+
+        💪 Strongest Area:
+        {'Credit Stability' if credit_score > 700 else 'Growth Potential'}
+
+        🎯 Priority Focus:
+        {'Expense Reduction' if expense_ratio > 0.7 else 'Investment Growth'}
+
+        🚀 Improvement Potential:
+        {improvement_score}/100
+        """
+        )
+    # -----------------------------------------------------
+# ANALYSIS HISTORY PAGE
+# -----------------------------------------------------
+
+elif page == "Analysis History":
+
+    st.title("Financial Analysis History")
+    
+
+    # LOAD USER PROFILE
+
+    profile = st.session_state.get(
+        "user_profile",
+        {}
+    )
+
+    if not profile:
+
+        st.warning(
+            "Please create your financial profile first."
+        )
+
+    else:
+        # LOAD HISTORY
+
+       
+        history_df = pd.read_sql_query(
+
+            '''
+
+            SELECT *
+
+            FROM analysis_history
+
+            WHERE username = ?
+
+            ORDER BY timestamp DESC
+
+            ''',
+
+            conn,
+
+            params=(
+                st.session_state.username,
+            )
+
+        )
+
+        if history_df.empty:
+
+            st.info(
+                "No saved analysis history found."
+            )
+
+        else:
+            latest_record = history_df.iloc[0]
+
+            col1, col2, col3 = st.columns(3)
+
+            with col1:
+                st.metric(
+                    "Total Records",
+                    len(history_df)
+                )
+
+            with col2:
+                st.metric(
+                    "Latest Savings",
+                    f"₹ {latest_record['savings']:,.0f}"
+                )
+
+            with col3:
+                st.metric(
+                    "Latest Credit Score",
+                    int(latest_record['credit_score'])
+                )
+            st.markdown(
+                "## 📊 Saved Financial Records"
+            )
+
+            st.dataframe(
+
+                history_df[
+                    [
+                        "username",
+                        "timestamp",
+                        "income",
+                        "expenses",
+                        "savings",
+                        "debt",
+                        "investments",
+                        "credit_score",
+                        "financial_goal"
+                    ]
+                ],
+
+                use_container_width=True
+
+            )
+            csv = history_df.to_csv(
+                index=False
+            )
+
+            st.download_button(
+
+                label="📥 Download History CSV",
+
+                data=csv,
+
+                file_name="analysis_history.csv",
+
+                mime="text/csv"
+
+            )
+            # HISTORY CHARTS
+
+            st.markdown("## 📈 Overall Financial Trend")
+
+            history_df["timestamp"] = pd.to_datetime(
+                history_df["timestamp"]
+            )
+
+            fig, ax = plt.subplots(figsize=(6,3))
+            history_df["date"] = pd.to_datetime(
+                history_df["timestamp"]
+            ).dt.strftime("%d-%b")
+
+            ax.plot(
+                history_df["timestamp"],
+                history_df["expenses"],
+                marker='o',
+                label="Expenses",
+                color=FINANCE_COLORS["expense"]
+            )
+
+            ax.plot(
+                history_df["timestamp"],
+                history_df["savings"],
+                marker='o',
+                label="Savings",
+                color=FINANCE_COLORS["saving"]
+            )
+
+            ax.plot(
+                history_df["timestamp"],
+                history_df["investments"],
+                marker='o',
+                label="Investments",
+                color=FINANCE_COLORS["investment"]
+            )
+
+            # smaller labels
+            ax.tick_params(axis='x', labelsize=8)
+            ax.tick_params(axis='y', labelsize=8)
+
+            # rotate labels
+            plt.xticks(rotation=30)
+
+            # smaller legend
+            ax.legend(fontsize=8)
+
+            # smaller axis titles
+            ax.set_xlabel("Date", fontsize=9)
+            ax.set_ylabel("Amount", fontsize=9)
+
+            plt.tight_layout()
+            fig.patch.set_facecolor("#0F172A")
+
+            ax.set_facecolor("#0F172A")
+
+            ax.grid(alpha=0.3,color="#64748B")
+
+            ax.tick_params(colors="white")
+            ax.set_xlabel("Date", color="white")
+            ax.set_ylabel("Amount", color="white")
+            ax.set_title("Overall Financial Trend",color="white")
+
+
+            ax.legend(
+                facecolor="#0F172A",
+                edgecolor="#64748B",
+                labelcolor="white"
+            )
+
+            ax.spines['top'].set_visible(False)
+            ax.spines['right'].set_visible(False)
+
+            ax.spines['left'].set_color("#64748B")
+            ax.spines['bottom'].set_color("#64748B")
+            st.pyplot(fig)
+            # AI INSIGHTS
+
+            st.markdown(
+                "## 🧠 AI Trend Insights"
+            )
+
+            latest = history_df.iloc[0]
+
+            oldest = history_df.iloc[-1]
+
+            if latest["savings"] > oldest["savings"]:
+
+                st.success(
+                    "Savings trend is improving."
+                )
+
+            else:
+
+                st.warning(
+                    "Savings trend is decreasing."
+                )
+
+            if latest["expenses"] > oldest["expenses"]:
+
+                st.warning(
+                    "Expenses are increasing over time."
+                )
+
+            else:
+
+                st.success(
+                    "Expense management is improving."
+                )
+
+            if latest["investments"] > oldest["investments"]:
+
+                st.success(
+                    "Investment growth is positive."
+                )
+
+            else:
+
+                st.info(
+                    "Investment growth is stable."
+                )
+    # -----------------------------------------------------
+# AI CHATBOT PAGE
+# -----------------------------------------------------
+
+elif page == "AI Chatbot":
+
+    st.title("AI Financial Assistant")
+
+    st.markdown(
+        "Ask personalized finance questions based on your profile."
+    )
+
+    profile = st.session_state.get(
+        "user_profile",
+        {}
+    )
+
+    if not profile:
+
+        st.warning(
+            "Please create your financial profile first."
+        )
+
+    else:
+
+        income = profile["income"]
+
+        expenses = profile["expenses"]
+
+        savings = profile["savings"]
+
+        debt = profile["debt"]
+
+        investments = profile["investments"]
+
+        credit_score = profile["credit_score"]
+
+        financial_goal = profile["financial_goal"]
+        # LOAD RECENT ANALYSIS HISTORY
+
+        history_df = pd.read_sql_query(
+
+            """
+            SELECT *
+
+            FROM analysis_history
+
+            WHERE username = ?
+
+            ORDER BY timestamp DESC
+
+            LIMIT 5
+            """,
+
+            conn,
+
+            params=(
+                st.session_state.username,
+            )
+
+        )
+
+        history_summary = f"""
+        Average Income: {history_df['income'].mean():.0f}
+        Average Expenses: {history_df['expenses'].mean():.0f}
+        Average Savings: {history_df['savings'].mean():.0f}
+        Average Investments: {history_df['investments'].mean():.0f}
+        """
+        # CHAT HISTORY STORAGE
+
+        if "chat_history" not in st.session_state:
+            st.session_state.chat_history = []
+        # CHAT INPUT
+
+        user_question = st.text_input(
+            "Ask your finance question"
+        )
+
+        if st.button("Generate AI Response"):
+
+            if user_question:
+
+                financial_context = f"""
+                You are an expert financial advisor.
+
+                User Financial Profile:
+
+                Income: {income}
+                Expenses: {expenses}
+                Savings: {savings}
+                Debt: {debt}
+                Investments: {investments}
+                Credit Score: {credit_score}
+                Financial Goal: {financial_goal}
+
+                Recent Financial History:
+
+                {history_summary}
+
+                User Question:
+
+                {user_question}
+
+                Instructions:
+
+                - Analyze the user's profile and financial history before answering.
+                - Choose the most suitable response format automatically.
+                - If the question asks for a plan, provide step-by-step guidance.
+                - If the question asks for advice, provide recommendations.
+                - If the question asks for comparison, provide a comparison table or pros and cons.
+                - If the question asks for a decision, explain reasoning and recommendation.
+                - Keep answers concise and easy to read.
+                - Use bullet points when helpful.
+                - Use ₹ currency.
+                - Prefer personalized answers using the user's financial profile and history.
+                - Keep the response under 200 words.
+                - Answer ONLY finance related questions.
+                - If the question is unrelated to finance, respond:
+                    "I am a Financial Assistant and can answer only finance-related questions."
+                
                 """
                 try:
-                    response = model.generate_content(prompt)
+
+                    response = model.generate_content(
+                        financial_context
+                    )
+                    st.session_state.chat_history.append(
+                        {
+                            "question": user_question,
+                            "answer": response.text
+                        }
+                    )
+
+                    st.markdown("## 🤖 AI Response")
+
                     st.markdown(response.text)
+                    st.divider()
+
                 except Exception as e:
-                    st.error(f"Failed to query Gemini API: {e}")
-        else:
-            # Fallback advice if API Key is not configured
-            st.markdown("### 📊 Recommended Asset Allocation")
-            st.write("- **Emergency Fund (Cash)**: 20% (Target ₹" + f"{expenses * 6:,.0f}" + " for 6-months coverage)")
-            st.write("- **Equities/Mutual Funds**: 50% (For capital growth aligned with: " + financial_goal + ")")
-            st.write("- **Fixed Income/Debt Instruments**: 30% (For safety and risk balancing)")
-            st.markdown("### 🛠️ Tactical Recommendations")
-            st.write(f"- **Budgeting**: Keep fixed monthly expenditures below ₹{income * 0.5:,.0f} (50% rule). Currently spending ₹{expenses:,.0f}.")
-            if debt > 0:
-                st.write("- **Debt Management**: Allocate surplus funds to pay down high-interest components using the Debt Avalanche method.")
-            st.write(f"- **Credit Score**: Your score is {credit_score}. Pay bills automatically on-time and keep credit card utilisation below 30%.")
-            st.markdown("### 🚀 Priority Action Items")
-            st.write("1. Setup an automated monthly transfer of ₹" + f"{income * 0.2:,.0f}" + " into your savings account.")
-            st.write("2. Open a dedicated mutual fund SIP matching your goals.")
-            st.write("3. Review your expense ledger on the Expense Tracker page to audit leaks.")
-# -----------------------------------------------------
-# PAGE 10: ANALYSIS HISTORY
-# -----------------------------------------------------
-elif page == "Analysis History":
-    st.title("📜 Financial Analysis History")
-    st.markdown("Track your saved profiles and historical progress over time.")
-    history_df = pd.read_sql_query(
-        "SELECT * FROM analysis_history WHERE username = ? ORDER BY timestamp DESC",
-        conn,
-        params=(st.session_state.username,)
-    )
-    if history_df.empty:
-        st.warning("No analysis history recorded. Save your profile on the 'Financial Profile' page first.")
-    else:
-        st.dataframe(history_df, use_container_width=True)
-        if len(history_df) >= 2:
-            st.markdown("## 📈 Historical Progress Charts")
-            
-            history_df['timestamp'] = pd.to_datetime(history_df['timestamp'])
-            history_df = history_df.sort_values(by="timestamp")
-            # Plot Income vs Savings vs Debt
-            fig_hist, ax_hist = plt.subplots(figsize=(10, 3.5))
-            ax_hist.plot(history_df['timestamp'], history_df['income'], marker='o', label='Income', color="#10B981", linewidth=2)
-            ax_hist.plot(history_df['timestamp'], history_df['savings'], marker='s', label='Savings', color="#06B6D4", linewidth=2)
-            ax_hist.plot(history_df['timestamp'], history_df['debt'], marker='x', label='Debt', color="#EF4444", linewidth=2)
-            
-            ax_hist.set_ylabel("Amount (₹)")
-            ax_hist.legend()
-            
-            fig_hist.patch.set_facecolor("#0F172A")
-            ax_hist.set_facecolor("#0F172A")
-            ax_hist.grid(alpha=0.2, color="#64748B")
-            ax_hist.tick_params(colors="white")
-            ax_hist.xaxis.label.set_color("white")
-            ax_hist.yaxis.label.set_color("white")
-            ax_hist.spines['top'].set_visible(False)
-            ax_hist.spines['right'].set_visible(False)
-            ax_hist.spines['left'].set_color("#64748B")
-            ax_hist.spines['bottom'].set_color("#64748B")
-            
-            plt.xticks(rotation=30)
-            plt.tight_layout()
-            st.pyplot(fig_hist)
-        else:
-            st.info("Additional historical charts will generate automatically when multiple profiles are saved over time.")
-# -----------------------------------------------------
-# PAGE 11: AI CHATBOT
-# -----------------------------------------------------
-elif page == "AI Chatbot":
-    st.title("💬 Context-Aware AI Chatbot")
-    st.markdown("Chat with your personal financial AI assistant about your specific ledger.")
-    profile = st.session_state.get("user_profile", {})
-    if not profile:
-        st.warning("Please create your financial profile first so the AI assistant has context on your figures.")
-        income, expenses, savings, debt, credit_score, investments, financial_goal = 0, 0, 0, 0, 650, 0, "Save More"
-    else:
-        income = profile["income"]
-        expenses = profile["expenses"]
-        savings = profile["savings"]
-        debt = profile["debt"]
-        credit_score = profile["credit_score"]
-        investments = profile["investments"]
-        financial_goal = profile["financial_goal"]
-    system_instructions = f"""
-    You are an expert personal financial chatbot advisor. The user is asking you financial questions.
-    Here is their profile for context:
-    - Monthly Income: ₹{income:,.0f}
-    - Monthly Expenses: ₹{expenses:,.0f}
-    - Total Savings: ₹{savings:,.0f}
-    - Total Debt: ₹{debt:,.0f}
-    - Credit Score: {credit_score}
-    - Monthly Investments: ₹{investments:,.0f}
-    - Financial Goal: {financial_goal}
-    Always refer to their specific numbers when answering questions. Give precise, professional advice. Keep answers relatively concise and highly actionable.
-    """
-    if "chat_history" not in st.session_state:
-        st.session_state.chat_history = []
-    # Display chat history
-    for msg in st.session_state.chat_history:
-        with st.chat_message(msg["role"]):
-            st.write(msg["content"])
-    # User Input
-    user_input = st.chat_input("Ask a financial question (e.g., How can I reduce my debt?)")
-    if user_input:
-        # User message
-        st.session_state.chat_history.append({"role": "user", "content": user_input})
-        with st.chat_message("user"):
-            st.write(user_input)
-        # AI response
-        with st.chat_message("assistant"):
-            if model:
-                try:
-                    # Construct conversational prompt with system guidelines prepended
-                    full_prompt = f"{system_instructions}\n\nChat History:\n"
-                    for msg in st.session_state.chat_history[:-1]:
-                        full_prompt += f"{msg['role'].capitalize()}: {msg['content']}\n"
-                    full_prompt += f"User: {user_input}\nAssistant:"
-                    with st.spinner("Thinking..."):
-                        response = model.generate_content(full_prompt)
-                        reply = response.text
-                        st.write(reply)
-                        st.session_state.chat_history.append({"role": "assistant", "content": reply})
-                except Exception as e:
-                    err_msg = f"API Error: {e}"
-                    st.error(err_msg)
+
+                    st.error(
+                        f"Actual Error: {str(e)}"
+                    )
+
             else:
-                # Fallback chatbot if no API key is set
-                reply = f"Thank you for your question: '{user_input}'. Since GEMINI_API_KEY is not configured, here is a standard response based on your goal to '{financial_goal}': We recommend reviewing your monthly budget (Income: ₹{income:,.0f}, Expenses: ₹{expenses:,.0f}) and setting up automatic investment allocations."
-                st.write(reply)
-                st.session_state.chat_history.append({"role": "assistant", "content": reply})
+
+                st.warning(
+                    "Please enter a question."
+                )
+
+        # CHAT HISTORY
+
+        if len(st.session_state.chat_history) > 0:
+
+            with st.expander(
+                "💬 View Recent Conversations"
+            ):
+
+                for chat in reversed(
+                    st.session_state.chat_history[-5:]
+                ):
+
+                    st.write(
+                        f"**Q:** {chat['question']}"
+                    )
+
+                    st.write(
+                        f"**A:** {chat['answer']}"
+                    )
+
+                    st.divider()
