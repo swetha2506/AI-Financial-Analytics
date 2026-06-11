@@ -398,8 +398,11 @@ FINANCE_COLORS = {
     "investment": "#8B5CF6",
     "debt": "#F59E0B"
 }
-st.session_state.logged_in = True
-st.session_state.username = "demo_user"
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = True
+
+if "username" not in st.session_state:
+    st.session_state.username = "demo_user"
 
 if "user_profile" not in st.session_state:
     st.session_state.user_profile = {}
@@ -800,7 +803,6 @@ if page == "Home":
             use_container_width=True
         ):
             st.session_state.page = "Financial Profile"
-            st.rerun()
         st.markdown("<br>", unsafe_allow_html=True)
 
         if st.button(
@@ -808,7 +810,6 @@ if page == "Home":
             use_container_width=True
         ):
             st.session_state.page = "Analytics Dashboard"
-            st.rerun()
         st.markdown("<br>", unsafe_allow_html=True)
 
         if st.button(
@@ -816,7 +817,6 @@ if page == "Home":
             use_container_width=True
         ):
             st.session_state.page = "Expense Tracker"
-            st.rerun()
         st.markdown("<br>", unsafe_allow_html=True)
 
         if st.button(
@@ -824,7 +824,6 @@ if page == "Home":
             use_container_width=True
         ):
             st.session_state.page = "Spending Analysis"
-            st.rerun()
         st.markdown("<br>", unsafe_allow_html=True)
 
 
@@ -838,7 +837,6 @@ if page == "Home":
             use_container_width=True
         ):
             st.session_state.page = "Expense Predictor"
-            st.rerun()
         st.markdown("<br>", unsafe_allow_html=True)
 
         if st.button(
@@ -846,7 +844,6 @@ if page == "Home":
             use_container_width=True
         ):
             st.session_state.page = "Risk Analyzer"
-            st.rerun()
         st.markdown("<br>", unsafe_allow_html=True)
 
         if st.button(
@@ -854,7 +851,6 @@ if page == "Home":
             use_container_width=True
         ):
             st.session_state.page = "Financial Health"
-            st.rerun()
         st.markdown("<br>", unsafe_allow_html=True)
 
         if st.button(
@@ -862,7 +858,6 @@ if page == "Home":
             use_container_width=True
         ):
             st.session_state.page = "Forecasting"
-            st.rerun()
         st.markdown("<br>", unsafe_allow_html=True)
 
 
@@ -876,7 +871,6 @@ if page == "Home":
             use_container_width=True
         ):
             st.session_state.page = "Smart Recommendations"
-            st.rerun()
         st.markdown("<br>", unsafe_allow_html=True)
 
         if st.button(
@@ -884,7 +878,6 @@ if page == "Home":
             use_container_width=True
         ):
             st.session_state.page = "Analysis History"
-            st.rerun()
         st.markdown("<br>", unsafe_allow_html=True)
 
         if st.button(
@@ -892,7 +885,6 @@ if page == "Home":
             use_container_width=True
         ):
             st.session_state.page = "AI Chatbot"
-            st.rerun()
         st.markdown("<br>", unsafe_allow_html=True)
 # -----------------------------------------------------
 # financial profile
@@ -1640,7 +1632,7 @@ elif page == "Expense Tracker":
 
         st.success("✅ 60 Demo Expenses Loaded Successfully!")
 
-        st.rerun()# -----------------------------------------------------
+# -----------------------------------------------------
 # SPENDING ANALYSIS
 # -----------------------------------------------------
 
