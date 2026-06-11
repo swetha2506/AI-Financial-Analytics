@@ -820,6 +820,19 @@ with tab2:
 
             st.write("USER FOUND:")
             st.write(user)
+            cursor.execute("SELECT username FROM users")
+
+            st.write("ALL USERNAMES:")
+            st.write(cursor.fetchall())
+
+            st.write("LOGIN USERNAME RAW:")
+            st.write(repr(login_username))
+
+            st.write("LOGIN USERNAME STRIPPED:")
+            st.write(repr(login_username.strip()))
+
+            st.write("USER FOUND:")
+            st.write(user)
 
             if user:
 
