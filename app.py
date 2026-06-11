@@ -400,6 +400,9 @@ FINANCE_COLORS = {
 }
 st.session_state.logged_in = True
 st.session_state.username = "demo_user"
+
+if "user_profile" not in st.session_state:
+    st.session_state.user_profile = {}
 st.markdown(
     """
     <style>
