@@ -559,7 +559,7 @@ if page == "Home":
     st.markdown(
         """
         <h1 style='text-align:center;'>
-        AI-Driven Personal Financial Intelligence Platform
+        Financial Analytics Platform
         </h1>
         """,
         unsafe_allow_html=True
@@ -583,49 +583,49 @@ if page == "Home":
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        if st.button("🏦 Financial Profile", use_container_width=True):
+        if st.button(" Financial Profile", use_container_width=True):
             st.session_state.page = "Financial Profile"
             st.rerun()
         st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("📊 Analytics Dashboard", use_container_width=True):
+        if st.button(" Analytics Dashboard", use_container_width=True):
             st.session_state.page = "Analytics Dashboard"
             st.rerun()
         st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("💸 Expense Tracker", use_container_width=True):
+        if st.button(" Expense Tracker", use_container_width=True):
             st.session_state.page = "Expense Tracker"
             st.rerun()
         st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("📈 Spending Analysis", use_container_width=True):
+        if st.button(" Spending Analysis", use_container_width=True):
             st.session_state.page = "Spending Analysis"
             st.rerun()
         st.markdown("<br>", unsafe_allow_html=True)
     with col2:
-        if st.button("🔮 Expense Predictor", use_container_width=True):
+        if st.button(" Expense Predictor", use_container_width=True):
             st.session_state.page = "Forecasting"
             st.rerun()
         st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("⚠️ Risk Analyzer", use_container_width=True):
+        if st.button(" Risk Analyzer", use_container_width=True):
             st.session_state.page = "Risk Analyzer"
             st.rerun()
         st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("💚 Financial Health", use_container_width=True):
+        if st.button(" Financial Health", use_container_width=True):
             st.session_state.page = "Financial Health"
             st.rerun()
         st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("📈 Forecasting", use_container_width=True):
+        if st.button(" Forecasting", use_container_width=True):
             st.session_state.page = "Forecasting"
             st.rerun()
         st.markdown("<br>", unsafe_allow_html=True)
     with col3:
-        if st.button("💡 Smart Recommendations", use_container_width=True):
+        if st.button(" Smart Recommendations", use_container_width=True):
             st.session_state.page = "Smart Recommendations"
             st.rerun()
         st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("📜 Analysis History", use_container_width=True):
+        if st.button(" Analysis History", use_container_width=True):
             st.session_state.page = "Analysis History"
             st.rerun()
         st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("🤖 AI Chatbot", use_container_width=True):
+        if st.button(" AI Chatbot", use_container_width=True):
             st.session_state.page = "AI Chatbot"
             st.rerun()
         st.markdown("<br>", unsafe_allow_html=True)
@@ -725,12 +725,12 @@ elif page == "Financial Profile":
         st.markdown("## 📋 Profile Summary")
         st.info(
             f"""
-            💰 Income: ₹{income:,.0f}
-            💸 Expenses: ₹{expenses:,.0f}
-            🏦 Savings: ₹{savings:,.0f}
+            - 💰 Income: ₹{income:,.0f}
+            - 💸 Expenses: ₹{expenses:,.0f}
+            - 🏦 Savings: ₹{savings:,.0f}
             📉 Debt: ₹{debt:,.0f}
-            📈 Investments: ₹{investments:,.0f}
-            🎯 Goal: {financial_goal}
+            - 📈 Investments: ₹{investments:,.0f}
+            - 🎯 Goal: {financial_goal}
             """
         )
         if debt < income * 0.5 and savings > expenses:
@@ -1032,7 +1032,7 @@ elif page == "Spending Analysis":
         expenses_df["expense_date"] = pd.to_datetime(expenses_df["expense_date"])
         expenses_df["month"] = expenses_df["expense_date"].dt.to_period("M")
         monthly_data = expenses_df.groupby("month")["amount"].sum()
-        monthly_data.index = pd.to_datetime(monthly_data.index.astype(str)).strftime("%b %Y")
+        monthly_data.index = pd.to_datetime(monthly_data.index.astype(str)).strftime("%b\n%Y")
         left, center, right = st.columns([1,3,1])
         with center:
             fig2, ax2 = plt.subplots(figsize=(5,2.5))
@@ -1103,7 +1103,7 @@ elif page == "Spending Analysis":
 # PAGE 6: RISK ANALYZER
 # -----------------------------------------------------
 elif page == "Risk Analyzer":
-    st.title("🛡️ AI Financial Risk Analyzer")
+    st.title(" AI Financial Risk Analyzer")
     profile = st.session_state.get("user_profile", {})
     if not profile:
         st.warning("Please create your financial profile first.")
@@ -1219,7 +1219,7 @@ elif page == "Risk Analyzer":
 # PAGE 7: FINANCIAL HEALTH assessment & PDF EXPORT
 # -----------------------------------------------------
 elif page == "Financial Health":
-    st.title("💚 AI Financial Health Assessment")
+    st.title(" AI Financial Health Assessment")
     profile = st.session_state.get("user_profile", {})
     if not profile:
         st.warning("Please create your financial profile first.")
@@ -1302,29 +1302,11 @@ elif page == "Financial Health":
             ax.spines['left'].set_color("#64748B")
             ax.spines['bottom'].set_color("#64748B")
             st.pyplot(fig)
-        st.markdown("## 📥 Export Financial Assessment")
-        income_usd = income / 80.0
-        savings_usd_pred = savings / 80.0
-        predicted_expense_usd = expense_model.predict([[
-            income_usd,
-            savings_usd_pred,
-            credit_score,
-            debt_ratio
-        ]])[0]
-        predicted_expense = max(0.0, predicted_expense_usd * 80.0)
-        pdf_data = get_pdf_bytes(income, savings, predicted_expense, health_status, health_grade)
-        
-        st.download_button(
-            label="📥 Download Financial Assessment PDF",
-            data=pdf_data,
-            file_name=f"financial_health_report_{st.session_state.username}.pdf",
-            mime="application/pdf"
-        )
 # -----------------------------------------------------
 # PAGE 8: FORECASTING & SCENARIO BUILDER
 # -----------------------------------------------------
 elif page == "Forecasting":
-    st.title("🔮 Scenario Forecasting & Predictions")
+    st.title(" Scenario Forecasting & Predictions")
     st.markdown("Simulate different budget scenarios to forecast expenses and savings models.")
     profile = st.session_state.get("user_profile", {})
     if not profile:
@@ -1433,7 +1415,7 @@ elif page == "Forecasting":
 
 elif page == "Smart Recommendations":
 
-    st.title("AI Smart Financial Advisor")
+    st.title(" Smart Financial Advisor")
 
     profile = st.session_state.get(
         "user_profile",
