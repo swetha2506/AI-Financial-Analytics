@@ -398,14 +398,8 @@ FINANCE_COLORS = {
     "investment": "#8B5CF6",
     "debt": "#F59E0B"
 }
-if "logged_in" not in st.session_state:
-
-    st.session_state.logged_in = False
-
-if "username" not in st.session_state:
-
-    st.session_state.username = ""
-
+st.session_state.logged_in = True
+st.session_state.username = "demo_user"
 st.markdown(
     """
     <style>
@@ -704,183 +698,17 @@ X_train_risk, X_test_risk, y_train_risk, y_test_risk = train_test_split(
 risk_model = RandomForestClassifier()
 risk_model.fit(X_train_risk, y_train_risk)
 # -----------------------------------------------------
-# LOGIN / SIGNUP SYSTEM
-# -----------------------------------------------------
-
-tab1, tab2 = st.tabs(
-    ["📝 Signup", "🔑 Login"]
-)
-
-# ---------------- SIGNUP ----------------
-
-with tab1:
-
-    signup_username = st.text_input(
-        "Username",
-        key="signup_user"
-    )
-
-    signup_password = st.text_input(
-        "Password",
-        type="password",
-        key="signup_pass"
-    )
-
-    if st.button(
-        "Create Account",
-        use_container_width=True
-    ):
-
-        try:
-
-            st.write("STEP 1 : Button Clicked")
-            import os
-
-            st.write("DATABASE FILE:")
-            st.write(os.path.abspath("financial_analytics.db"))
-
-            cursor.execute(
-                '''
-                INSERT INTO users (
-                    username,
-                    password
-                )
-                VALUES (?, ?)
-                ''',
-                (
-                    signup_username.strip(),
-                    signup_password.strip()
-                )
-            )
-
-            conn.commit()
-
-            cursor.execute(
-                '''
-                SELECT *
-                FROM users
-                WHERE username = ?
-                ''',
-                (signup_username.strip(),)
-            )
-
-            st.write("NEW USER AFTER INSERT:")
-            st.write(cursor.fetchone())
-
-            cursor.execute("SELECT * FROM users")
-
-            st.write("ALL USERS:")
-            st.write(cursor.fetchall())
-
-            st.success("Account created successfully")
-        except Exception as e:
-
-            st.error(
-                f"REAL ERROR = {e}"
-            )
-
-# ---------------- LOGIN ----------------
-
-with tab2:
-
-    login_username = st.text_input(
-        "Username",
-        key="login_user"
-    )
-
-    login_password = st.text_input(
-        "Password",
-        type="password",
-        key="login_pass"
-    )
-
-    if st.button(
-        "Login",
-        use_container_width=True
-    ):
-
-        try:
-
-            st.write("STEP 1 : Login Button Clicked")
-            import os
-
-            st.write("DATABASE FILE:")
-            st.write(os.path.abspath("financial_analytics.db"))
-
-            cursor.execute(
-                '''
-                SELECT *
-                FROM users
-                WHERE TRIM(username)=?
-                ''',
-                (login_username.strip(),)
-            )
-            user = cursor.fetchone()
-
-
-            st.write("USER FOUND:")
-            st.write(user)
-            cursor.execute("SELECT username FROM users")
-
-            st.write("ALL USERNAMES:")
-            st.write(cursor.fetchall())
-
-            st.write("LOGIN USERNAME RAW:")
-            st.write(repr(login_username))
-
-            st.write("LOGIN USERNAME STRIPPED:")
-            st.write(repr(login_username.strip()))
-
-            st.write("USER FOUND:")
-            st.write(user)
-
-            if user:
-
-                st.write("DATABASE PASSWORD:")
-                st.write(user[3])
-
-                st.write("ENTERED PASSWORD:")
-                st.write(login_password.strip())
-
-                if str(user[3]).strip() == login_password.strip():
-
-                    st.success("LOGIN SUCCESSFUL")
-
-                else:
-
-                    st.error("PASSWORD MISMATCH")
-
-            else:
-
-                st.error("USERNAME NOT FOUND")
-        except Exception as e:
-
-            st.error(
-                f"LOGIN ERROR = {e}"
-            )
-
-# -----------------------------------------------------
 # SIDEBAR NAVIGATION
 # -----------------------------------------------------
-if "logged_in" not in st.session_state:
-    st.session_state.logged_in = False
+st.session_state.logged_in = True
+st.session_state.username = "demo_user"
 
-if "username" not in st.session_state:
-    st.session_state.username = ""
 st.sidebar.title("💰 Fintech Analytics")
 
 if st.session_state.logged_in:
     st.sidebar.success(
         f"Logged in as: {st.session_state.username}"
     )
-
-pages = [
-
-    "Login",
-
-    "Register"
-
-]
 
 if st.session_state.logged_in:
 
@@ -908,7 +736,6 @@ if st.session_state.logged_in:
 
         "AI Chatbot",
 
-        "Logout"
 
     ]
 
@@ -926,15 +753,7 @@ page = st.sidebar.radio(
 )
 
 st.session_state.page = page
-if page == "Logout":
 
-    st.session_state.logged_in = False
-    st.session_state.username = ""
-    st.session_state.user_profile = {}
-
-    st.success("Logged out successfully.")
-
-    st.rerun()
 #-----------------------------------------------------
 # home
 # -----------------------------------------------------
@@ -943,24 +762,12 @@ if page == "Home":
     st.markdown(
         """
         <h1 style='text-align:center;'>
-        Financial Analytics Platform
+        AI-Driven Personal Financial Intelligence Platform
         </h1>
         """,
         unsafe_allow_html=True
     )
-    st.markdown(
-        """
-        <div style='text-align:center;'>
-
-        <h3 style='color:#4A90E2;'>
-         Your Personal AI-Powered Financial Intelligence Platform
-        </h3>
-
-
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    
     st.markdown("<br>", unsafe_allow_html=True)
     st.markdown(
         """
